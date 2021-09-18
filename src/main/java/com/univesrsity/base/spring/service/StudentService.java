@@ -3,6 +3,7 @@ package com.univesrsity.base.spring.service;
 import com.univesrsity.base.spring.entity.Student;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentService {
 
@@ -10,7 +11,7 @@ public interface StudentService {
 
   Student saveStudent(Student student);
 
-  Student getStudentById(Long id);
+  Optional<Student> getStudentById(Long id);
 
   Student updateStudent(Student student);
 

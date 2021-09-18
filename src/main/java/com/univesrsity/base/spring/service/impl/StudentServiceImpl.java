@@ -3,19 +3,17 @@ package com.univesrsity.base.spring.service.impl;
 import com.univesrsity.base.spring.entity.Student;
 import com.univesrsity.base.spring.repository.StudentRepository;
 import com.univesrsity.base.spring.service.StudentService;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
 
   private StudentRepository studentRepository;
-
-  public StudentServiceImpl(StudentRepository studentRepository) {
-    super();
-    this.studentRepository = studentRepository;
-  }
 
   @Override
   public List<Student> getAllStudents() {
@@ -28,8 +26,11 @@ public class StudentServiceImpl implements StudentService{
   }
 
   @Override
-  public Student getStudentById(Long id) {
-    return studentRepository.findById(id).get();
+  public Optional<Student> getStudentById(Long id) {
+    if (studentRepository.findById(id).isPresent()) {
+      return Optional.of(studentRepository.findById(id).get());
+    }
+    return Optional.empty();
   }
 
   @Override
@@ -41,6 +42,4 @@ public class StudentServiceImpl implements StudentService{
   public void deleteStudentById(Long id) {
     studentRepository.deleteById(id);
   }
-
 }
-

@@ -2,6 +2,8 @@ package com.univesrsity.base.spring.controller;
 
 import com.univesrsity.base.spring.entity.Student;
 import com.univesrsity.base.spring.service.StudentService;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,15 +11,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+@AllArgsConstructor
 @Controller
 public class StudentController {
 
   private StudentService studentService;
-
-  public StudentController(StudentService studentService) {
-    super();
-    this.studentService = studentService;
-  }
 
   // handler method to handle list students and return mode and view
   @GetMapping("/students")
@@ -33,7 +31,6 @@ public class StudentController {
     Student student = new Student();
     model.addAttribute("student", student);
     return "create_student";
-
   }
 
   @PostMapping("/students")
@@ -49,19 +46,21 @@ public class StudentController {
   }
 
   @PostMapping("/students/{id}")
-  public String updateStudent(@PathVariable Long id,
-                              @ModelAttribute("student") Student student,
-                              Model model) {
+  public String updateStudent(
+      @PathVariable Long id, @ModelAttribute("student") Student student, Model model) {
 
     // get student from database by id
-    Student existingStudent = studentService.getStudentById(id);
-    existingStudent.setId(id);
-    existingStudent.setFirstName(student.getFirstName());
-    existingStudent.setLastName(student.getLastName());
-    existingStudent.setEmail(student.getEmail());
+    Optional<Student> existingStudent = studentService.getStudentById(id);
+    if (existingStudent.isPresent()) {
+      Student presentStudent = existingStudent.get();
+      presentStudent.setId(id);
+      presentStudent.setFirstName(student.getFirstName());
+      presentStudent.setLastName(student.getLastName());
+      presentStudent.setEmail(student.getEmail());
 
-    // save updated student object
-    studentService.updateStudent(existingStudent);
+      // save updated student object
+      studentService.updateStudent(presentStudent);
+    }
     return "redirect:/students";
   }
 
@@ -72,5 +71,4 @@ public class StudentController {
     studentService.deleteStudentById(id);
     return "redirect:/students";
   }
-
 }
